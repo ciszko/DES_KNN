@@ -50,7 +50,6 @@ class DES_KNN(object):
         # copy the dataset
         self.X = X
         self.Y = Y
-        # check the shape
         if len(X) != len(Y):
             raise ValueError("Wrong shape")
         self.estimators_ = []
