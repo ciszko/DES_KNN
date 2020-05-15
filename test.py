@@ -11,6 +11,8 @@ from scipy.stats import rankdata
 from scipy.stats import ttest_ind
 from tabulate import tabulate
 from copy import deepcopy
+import matplotlib.pyplot as plt
+import matplotlib.ticker as mticker
 
 state = 77
 
@@ -30,7 +32,7 @@ def test(clf_pool, data, method=None):
     y = dataset[:, -1].astype(int)
 
     n_splits = 5
-    n_repeats = 2
+    n_repeats = 1
     rskf = RepeatedStratifiedKFold(
         n_splits=n_splits, n_repeats=n_repeats, random_state=42
     )
@@ -41,7 +43,7 @@ def test(clf_pool, data, method=None):
     for fold_id, (train, test) in enumerate(rskf.split(X, y)):
         for clf_id, clf_name in enumerate(clf_pool):
             sys.stdout.write("\r")
-            if method == "diversity":
+            if method == "diversity" or "param":
                 clf = deepcopy(clf_pool[clf_name])
             elif clf_name == "My DES_KNN":
                 clf = deepcopy(clf_pool[clf_name])
@@ -58,6 +60,8 @@ def test(clf_pool, data, method=None):
         np.save("./results/" + data, scores)
     elif method == "diversity":
         np.save("./results/div" + data, scores)
+    elif method == "param":
+        np.save("./results/par" + data, scores)
 
 
 def statistics(clf_pool, input_file, output_file, method=None):
@@ -131,11 +135,11 @@ def statistics(clf_pool, input_file, output_file, method=None):
         f.write(f"Statistically significantly better:\n {stat_better_table}\n")
 
 
-datasets = ["breast_cancer"]
+datasets = ["german", "wisconsin", "breast_cancer", "australian"]
 
-for dataset in datasets:
-    test(clfs, dataset)
-    statistics(clfs, dataset, dataset + ".txt")
+# for dataset in datasets:
+#     test(clfs, dataset)
+#     statistics(clfs, dataset, dataset + ".txt")
 
 # double_fault = DES_KNN(random_state=state)
 # q = deepcopy(double_fault)
@@ -149,3 +153,29 @@ for dataset in datasets:
 # for dataset in datasets:
 #     test(divs, dataset, method="diversity")
 #     statistics(divs, dataset, "div" + dataset + ".txt", method="diversity")
+
+dataset = "breast_cancer"
+
+base = DES_KNN()
+clfs = {}
+for i in range(10, 31):
+    clfs[i] = deepcopy(base)
+    clfs[i].n_estimators = i
+
+
+def stat_to_plot(clf_pool):
+    scores = np.load("./results/parbreast_cancer.npy")
+    scrs = []
+    for clf_id, clf in enumerate(clf_pool):
+        scrs.append([np.mean(scores[clf_id])])
+
+    plt.plot(list(range(10, 31)), scrs)
+    plt.ylabel("Accuracy")
+    plt.xlabel("Number of base estimators")
+    plt.title("Accuracy of DES-kNN based on number of base estimators \n (breast_cancer)")
+    plt.gca().xaxis.set_major_locator(mticker.MultipleLocator(1))
+    plt.grid(axis='x')
+    plt.show()
+
+
+stat_to_plot(clfs)

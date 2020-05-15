@@ -267,11 +267,11 @@ class DES_KNN(object):
             accuracies.append(self.calculate_accuracy(estimator, x, y))
         # find indices of N most accurate ones
         if type(self.N) is int:
-            ind = np.argpartition(accuracies, int(-self.N))[int(-self.N) :]
+            amount = max(1, int(-self.N))
+            ind = np.argpartition(accuracies, amount)[amount:]
         elif type(self.N) is float:
-            ind = np.argpartition(accuracies, int(-self.N * self.n_estimators))[
-                int(-self.N * self.n_estimators) :
-            ]
+            amount = max(1, int(-self.N * self.n_estimators))
+            ind = np.argpartition(accuracies, amount)[amount:]
         # create an ensemble of N most accurate classifiers
         ensemble_ = []
         for index in ind:
@@ -281,13 +281,14 @@ class DES_KNN(object):
         # convert matrix to list of diversities
         diversities = self.div_matrix_to_divs(div_matrix)
         # find indices of J most diverse ones
+
         if type(self.J) is int:
-            ind = np.argpartition(diversities, int(-self.J))[int(-self.J) :]
+            amount = max(1, int(-self.J))
+            ind = np.argpartition(diversities, amount)[amount:]
 
         elif type(self.J) is float:
-            ind = np.argpartition(diversities, int(-self.J * (self.n_estimators)))[
-                int(-self.J * (self.n_estimators)) :
-            ]
+            amount = int(-self.J * (self.n_estimators))
+            ind = np.argpartition(diversities, amount)[amount:]
 
         # create final ensemble
         final_ensemble = []
