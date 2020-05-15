@@ -1,5 +1,5 @@
 # DES_KNN
-Dynamic Ensemble Selection K-nearest Neighbours Classifier project for my university.
+Dynamic Ensemble Selection K-nearest Neighbours Classifier project for university.
 
 
 # Usage
