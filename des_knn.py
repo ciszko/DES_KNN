@@ -15,8 +15,8 @@ class DES_KNN(object):
         base_estimator {BaseEstimator} -- base estimator that will be later used for prediction
         n_estimators {int} -- number of base estimators
         k {int} -- number of neighbors to estimate competence region
-        N {int/float} -- int: number of N most accurate classifiers float: percentage of most accurate classifiers
-        J {int/float} -- int: number of J most diverse classifiers float: percentage of most accurate classifiers
+        N {int/float} -- int: number of N most accurate classifiers float: percentage of most accurate classifiers from n_estimators
+        J {int/float} -- int: number of J most diverse classifiers float: percentage of most accurate classifiers from n_estimators
         max_samples {int/float} -- maximum samples amount to choose for bagging
         div_method {string} -- method to calculate diversity between pair of classifiers. Supported: Q, double-fault, q(correalation coefficient), disagreement
         knn_metrics {string} -- metrics to calculate distance between samples. Supported: euclidean, manhattan
@@ -29,11 +29,11 @@ class DES_KNN(object):
         n_estimators=10,
         k=7,
         N=0.5,
-        J=0.7,
-        max_samples=0.1,
+        J=0.3,
+        max_samples=1.0,
         div_method="double-fault",
         knn_metrics="euclidean",
-        random_state=66,
+        random_state=77,
     ):
 
         self.base_estimator = base_estimator
@@ -285,8 +285,8 @@ class DES_KNN(object):
             ind = np.argpartition(diversities, int(-self.J))[int(-self.J) :]
 
         elif type(self.J) is float:
-            ind = np.argpartition(diversities, int(-self.J * len(ensemble_)))[
-                int(-self.J * len(ensemble_)) :
+            ind = np.argpartition(diversities, int(-self.J * (self.n_estimators)))[
+                int(-self.J * (self.n_estimators)) :
             ]
 
         # create final ensemble
@@ -304,30 +304,18 @@ class DES_KNN(object):
         Returns:
             list -- returns list of predicted classes
         """
-        # check if arg has mutiple samples
-        multi = any(isinstance(el, list) for el in samples)
         # create classes list to return
         classes = []
-        if multi:
-            # iterate over samples
-            for sample in samples:
-                # for every one create an ensemble of classifiers
-                self.ensemble_ = self.create_final_ensemble(sample)
-                # predict with every classifier from ensemble
-                predicts = []
-                for clas in self.ensemble_:
-                    predicts.append(clas.predict(sample.reshape(1, -1)).tolist())
-                # find most common occuring class from predictions
-                counter = sum(predicts, [])
-                classes.append(max(set(list(counter)), key=counter.count))
-        else:
+        # iterate over samples
+        for sample in samples:
             # for every one create an ensemble of classifiers
-            self.ensemble_ = self.create_final_ensemble(samples)
+            self.ensemble_ = self.create_final_ensemble(sample)
             # predict with every classifier from ensemble
             predicts = []
             for clas in self.ensemble_:
-                predicts.append(clas.predict(samples.reshape(1, -1)).tolist())
+                predicts.append((clas.predict(sample.reshape(1, -1))).tolist())
             # find most common occuring class from predictions
             counter = sum(predicts, [])
             classes.append(max(set(list(counter)), key=counter.count))
+
         return np.array(classes)

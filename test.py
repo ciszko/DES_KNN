@@ -12,7 +12,7 @@ from scipy.stats import ttest_ind
 from tabulate import tabulate
 from copy import deepcopy
 
-state = 66
+state = 77
 
 clfs = {
     "My DES_KNN": DES_KNN(random_state=state),
@@ -68,6 +68,7 @@ def statistics(clf_pool, input_file, output_file, method=None):
     scrs = []
     for clf_id, clf in enumerate(clf_pool):
         scrs.append([clf, np.mean(scores[clf_id])])
+    print(f"SCORES: \n {tabulate(scrs)} \n\n")
     # print("Folds:\n", scores)
     alfa = 0.05
     t_statistic = np.zeros((len(clf_pool), len(clf_pool)))
@@ -130,7 +131,7 @@ def statistics(clf_pool, input_file, output_file, method=None):
         f.write(f"Statistically significantly better:\n {stat_better_table}\n")
 
 
-datasets = ["wisconsin", "german", "breast_cancer", "australian"]
+datasets = ["breast_cancer"]
 
 for dataset in datasets:
     test(clfs, dataset)
@@ -147,4 +148,4 @@ for dataset in datasets:
 
 # for dataset in datasets:
 #     test(divs, dataset, method="diversity")
-#     statistics(divs, dataset, "div" + dataset + "txt", method="diversity")
+#     statistics(divs, dataset, "div" + dataset + ".txt", method="diversity")
