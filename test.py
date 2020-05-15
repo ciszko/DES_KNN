@@ -132,19 +132,19 @@ def statistics(clf_pool, input_file, output_file, method=None):
 
 datasets = ["wisconsin", "german", "breast_cancer", "australian"]
 
-# for dataset in datasets:
-#     test(clfs, dataset)
-#     statistics(clfs, dataset, dataset + ".txt")
-
-double_fault = DES_KNN(random_state=state)
-q = deepcopy(double_fault)
-q.div_method = "Q"
-p = deepcopy(double_fault)
-p.div_method = "p"
-dis = deepcopy(double_fault)
-dis.div_method = "disagreement"
-divs = {"double-fault": double_fault, "Q": q, "p": p, "disagreement": dis}
-
 for dataset in datasets:
-    test(divs, dataset, method="diversity")
-    statistics(divs, dataset, "div" + dataset + "txt", method="diversity")
+    test(clfs, dataset)
+    statistics(clfs, dataset, dataset + ".txt")
+
+# double_fault = DES_KNN(random_state=state)
+# q = deepcopy(double_fault)
+# q.div_method = "Q"
+# p = deepcopy(double_fault)
+# p.div_method = "p"
+# dis = deepcopy(double_fault)
+# dis.div_method = "disagreement"
+# divs = {"double-fault": double_fault, "Q": q, "p": p, "disagreement": dis}
+
+# for dataset in datasets:
+#     test(divs, dataset, method="diversity")
+#     statistics(divs, dataset, "div" + dataset + "txt", method="diversity")
