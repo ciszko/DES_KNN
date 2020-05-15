@@ -29,7 +29,7 @@ class DES_KNN(object):
         n_estimators=10,
         k=7,
         N=0.5,
-        J=0.5,
+        J=0.7,
         max_samples=0.1,
         div_method="double-fault",
         knn_metrics="euclidean",
