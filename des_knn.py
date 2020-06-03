@@ -1,8 +1,6 @@
 import numpy as np
-import random
 from sklearn.tree import DecisionTreeClassifier
 from sklearn.base import clone
-from math import sqrt
 
 
 class DES_KNN(object):
@@ -45,6 +43,7 @@ class DES_KNN(object):
         self.div_method = div_method
         self.knn_metrics = knn_metrics
         self.random_state = random_state
+        np.random.seed(self.random_state)
 
     def fit(self, X, Y):
         # copy the dataset
@@ -60,18 +59,15 @@ class DES_KNN(object):
             Y_ = []
             # if max_samples is int then choose max_samples samples
             if type(self.max_samples) is int:
-                for i in range(self.max_samples):
-                    seed = random.randint(0, len(X) - 1)
-                    X_.append(X[seed])
-                    Y_.append(Y[seed])
+                samples = np.random.randint(0, len(X) -1, size=self.max_samples)
+                X_ = (X[samples])
+                Y_ = (Y[samples])
             # if max_samples is float choose percentage of samples
             elif type(self.max_samples) is float:
-                for i in range(int(self.max_samples * len(X))):
-                    seed = random.randint(0, len(X) - 1)
-                    X_.append(X[seed])
-                    Y_.append(Y[seed])
+                samples = np.random.randint(0, len(X) -1, size=int(self.max_samples * len(X)))
+                X_ = (X[samples])
+                Y_ = (Y[samples])
             # create estimator pool
-            self.base_estimator.random_state = self.random_state
             self.estimators_.append(clone(self.base_estimator).fit(X_, Y_))
 
     def find_k_nn(self, point, neighbors=None, metrics=None):
@@ -127,19 +123,18 @@ class DES_KNN(object):
         TP = 0  # True Positive
         TN = 0  # True Negative
         FP = 0  # False Positive
-        FN = 0  # False Negative
-        # iterate over samples
-        for i, sample in enumerate(Xsamples):
-            # predict the sample
-            pred = classifier.predict(sample.reshape(1, -1))
-            # choose right case
-            if pred == Ysamples[i] == 1:
+        FN = 0  # False Negative       
+        # predict samples
+        pred = classifier.predict(Xsamples)
+        # choose right case
+        for i, sample in enumerate(pred):    
+            if sample == Ysamples[i] == 1:
                 TP += 1
-            elif pred == 0 and Ysamples[i] == 1:
+            elif sample == 0 and Ysamples[i] == 1:
                 FN += 1
-            elif pred == 1 and Ysamples[i] == 0:
+            elif sample == 1 and Ysamples[i] == 0:
                 FP += 1
-            elif pred == Ysamples[i] == 0:
+            elif sample == Ysamples[i] == 0:
                 TN += 1
         # calculate accuracy
         accuracy = (TP + FN) / (TP + TN + FP + FN)
@@ -165,19 +160,21 @@ class DES_KNN(object):
         N10 = 0  # 1 right, 2 wrong
         N01 = 0  # 1 wrong, 2 right
         N00 = 0  # both wrong
-        for i, sample in enumerate(X):
-            # predict by both classifiers
-            pred1 = class1.predict(sample.reshape(1, -1))
-            pred2 = class2.predict(sample.reshape(1, -1))
-            # check if predictions were correct
-            # calculate Nxx
-            if pred1 == pred2 == Y[i]:
+        
+        # predict by both classifiers
+        pred1 = class1.predict(X)
+        pred2 = class2.predict(X)
+        # check if predictions were correct
+        # calculate Nxx
+        for i in range(len(X)):    
+            
+            if pred1[i] == pred2[i] == Y[i]:
                 N11 += 1
-            elif pred1 == Y[i] and pred2 != Y[i]:
+            elif pred1[i] == Y[i] and pred2[i] != Y[i]:
                 N10 += 1
-            elif pred1 != Y[i] and pred2 == Y[i]:
+            elif pred1[i] != Y[i] and pred2[i] == Y[i]:
                 N01 += 1
-            elif pred1 == pred2 != Y[i]:
+            elif pred1[i] == pred2[i] != Y[i]:
                 N00 += 1
         # calculate based on given method
         if method == "Q":
@@ -185,7 +182,7 @@ class DES_KNN(object):
         if method == "double-fault":
             diversity = N00 / (N11 + N01 + N10 + N00)
         if method == "p":
-            diversity = (N11 * N00 - N01 * N10) / sqrt(
+            diversity = (N11 * N00 - N01 * N10) / np.sqrt(
                 (N11 + N10) * (N01 + N00) * (N11 + N01) * (N10 + N00)
             )
         if method == "disagreement":
@@ -237,7 +234,7 @@ class DES_KNN(object):
             list -- returns list of mean diversities
         """
         divs = []
-        for i, row in enumerate(np.array(div_matrix)):
+        for row in np.array(div_matrix):
             # calculate mean diversity between classifier and every other classifier
             divs.append(row[row != None].mean())
         return divs
