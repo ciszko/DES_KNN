@@ -1,0 +1,43 @@
+SCORES: 
+ ---------  --------
+euclidean  0.841063
+manhattan  0.842512
+---------  -------- 
+
+#####################################################################
+
+t-statistic:
+               euclidean    manhattan
+---------  -----------  -----------
+euclidean         0.00        -0.13
+manhattan         0.13         0.00  
+
+p-value:
+              euclidean    manhattan
+---------  -----------  -----------
+euclidean         1.00         0.90
+manhattan         0.90         1.00
+
+#####################################################################
+
+Advantage:
+              euclidean    manhattan
+---------  -----------  -----------
+euclidean            0            0
+manhattan            1            0
+
+#####################################################################
+
+Statistical significance (alpha = 0.05):
+              euclidean    manhattan
+---------  -----------  -----------
+euclidean            0            0
+manhattan            0            0
+
+#####################################################################
+
+Statistically significantly better:
+              euclidean    manhattan
+---------  -----------  -----------
+euclidean            0            0
+manhattan            0            0

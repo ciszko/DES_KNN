@@ -1,0 +1,61 @@
+SCORES: 
+ ----------  --------
+My DES_KNN  0.981541
+DES_KNN     0.989311
+KNORA-U     0.984446
+KNORA-E     0.990037
+ADABoost    0.996117
+----------  -------- 
+
+#####################################################################
+
+t-statistic:
+                My DeS_KNN    DES_KNN    KNORA-U    KNORA-E    ADABoost
+----------  ------------  ---------  ---------  ---------  ----------
+My DES_KNN          0.00      -2.45      -0.89      -2.88       -5.18
+DES_KNN             2.45       0.00       1.81      -0.32       -3.20
+KNORA-U             0.89      -1.81       0.00      -2.31       -5.19
+KNORA-E             2.88       0.32       2.31       0.00       -3.42
+ADABoost            5.18       3.20       5.19       3.42        0.00  
+
+p-value:
+               My DeS_KNN    DES_KNN    KNORA-U    KNORA-E    ADABoost
+----------  ------------  ---------  ---------  ---------  ----------
+My DES_KNN          1.00       0.02       0.38       0.01        0.00
+DES_KNN             0.02       1.00       0.08       0.76        0.00
+KNORA-U             0.38       0.08       1.00       0.03        0.00
+KNORA-E             0.01       0.76       0.03       1.00        0.00
+ADABoost            0.00       0.00       0.00       0.00        1.00
+
+#####################################################################
+
+Advantage:
+               My DeS_KNN    DES_KNN    KNORA-U    KNORA-E    ADABoost
+----------  ------------  ---------  ---------  ---------  ----------
+My DES_KNN             0          0          0          0           0
+DES_KNN                1          0          1          0           0
+KNORA-U                1          0          0          0           0
+KNORA-E                1          1          1          0           0
+ADABoost               1          1          1          1           0
+
+#####################################################################
+
+Statistical significance (alpha = 0.05):
+               My DeS_KNN    DES_KNN    KNORA-U    KNORA-E    ADABoost
+----------  ------------  ---------  ---------  ---------  ----------
+My DES_KNN             0          1          0          1           1
+DES_KNN                1          0          0          0           1
+KNORA-U                0          0          0          1           1
+KNORA-E                1          0          1          0           1
+ADABoost               1          1          1          1           0
+
+#####################################################################
+
+Statistically significantly better:
+               My DeS_KNN    DES_KNN    KNORA-U    KNORA-E    ADABoost
+----------  ------------  ---------  ---------  ---------  ----------
+My DES_KNN             0          0          0          0           0
+DES_KNN                1          0          0          0           0
+KNORA-U                0          0          0          0           0
+KNORA-E                1          0          1          0           0
+ADABoost               1          1          1          1           0
